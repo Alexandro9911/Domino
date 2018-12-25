@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -13,9 +12,30 @@ public class Domino {
 
     List<Chip> deck = new ArrayList<Chip>(); // Колода(без ошибок пользователя)
     int caseConnected;
+    String inputFileName;
+    String outputFileName;
 
-    public void setDeck(String inp) throws IOException {  // читает файл и сортирует, после этого данные записывает в колоду
-        File file = getFile(inp);
+    public void setInputFileName(String inputFileName) {
+        this.inputFileName = inputFileName;
+    }
+
+    public void setOutputFileName(String outputFileName) {
+        this.outputFileName = outputFileName;
+    }
+
+    public void setDeck() throws IOException {  // читает файл и сортирует, после этого данные записывает в колоду
+        File file = null;
+        try {
+            try {
+                file = getFile();
+            } catch (FileNotFoundException exep) {
+                System.err.println("File not found");
+                System.exit(-3);
+            }
+        } catch (NullPointerException ex) {
+            System.err.println("Empty file");
+            System.exit(-1);
+        }
         Scanner fileScan = new Scanner(file);
         while (fileScan.hasNextLine()) {
             String currStr = fileScan.nextLine();
@@ -34,40 +54,42 @@ public class Domino {
         }
     }
 
-    public File getFile(String string)throws IOException{
-        if (string.length() == 0){
-            throw new NoSuchFileException("Нулевая ссылка");
+
+    private File getFile() throws IOException {
+        if (inputFileName.length() == 0) {
+            throw new NullPointerException();
         }
-        File file = new File(string);
-        if(!file.exists()) {
-            throw new FileNotFoundException("Файл не существует");
-        }
-        if(file.length() == 0){
-            throw new NullPointerException("Пустой файл");
+        File file = new File(inputFileName);
+        if (!file.exists()) {
+            throw new FileNotFoundException();
         }
         return file;
     }
 
-    public boolean checkChip(Chip chip){  // проверка на правильность фишки
-        if(chip.first <= 6 && chip.first >= 0 && chip.second <= 6 && chip.second >= 0){
+
+    private boolean checkChip(Chip chip) {  // проверка на правильность фишки
+        if (chip.first <= 6 && chip.first >= 0 && chip.second <= 6 && chip.second >= 0) {
             return true;
-        } else{
+        } else {
             return false;
         }
     }
 
 
-    public boolean containsDeck(Chip chip){ // содержит ли колода данную фишку уже
+    private boolean containsDeck(Chip chip) { // содержит ли колода данную фишку уже
         boolean answ = false;
-        for (Chip inDeck : deck){
-                if(inDeck.equals(chip)){
-                   return true;
-                }
+        for (Chip inDeck : deck) {
+            if (inDeck.equals(chip)) {
+                return true;
             }
+        }
         return answ;
     }
 
-    public int canGoinCase(Chip one, Chip another) { // проверяет можно ли соединить фишки и выводит случай соединения
+    int canGoinCase(Chip one, Chip another) { // проверяет можно ли соединить фишки и выводит случай соединения
+        if (one == null || another == null) {
+            return -1;
+        }
         int answ = -1;
         if (one.second == another.first) {
             answ = 1;
@@ -82,15 +104,34 @@ public class Domino {
             answ = 4;
         }
         if (one.equals(another)) {
-            answ = -1;
+            answ = 0;
         }
         caseConnected = answ;
         return answ;
     }
 
-    public void writeAnsw(String outputName, List<Chip> result)throws IOException {
-        File answ = new File(outputName);
-        FileWriter fw = new FileWriter(answ);
-
+    public void writeAnsw(String answ) throws IOException {
+        try {
+            if (outputFileName.length() == 0) throw new NullPointerException();
+        } catch (NullPointerException ex) {
+            System.err.println("Empty outputfile name");
+            System.exit(1);
+        }
+        try {
+            if (outputFileName.matches("((\\?)|(\\*)|(:)|(\")|(<|>)|(\\|))"))
+                throw new IllegalArgumentException();
+        } catch (IllegalArgumentException ex) {
+            System.err.println("Uncorrect outputfile name");
+            System.exit(2);
+        }
+        File file = new File(outputFileName);
+        try {
+            FileWriter fw = new FileWriter(file);
+            fw.write(answ);
+            fw.close();
+        } catch (FileNotFoundException ex){
+            System.err.println("File not found");
+            System.exit(3);
+        }
     }
 }

@@ -1,10 +1,8 @@
 package com.kspt.Alexandr;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.kohsuke.args4j.Argument;
-import org.kohsuke.args4j.Option;
 
 public class DominoLauncher {
 
@@ -20,11 +18,15 @@ public class DominoLauncher {
     }
 
     private  void launch(String[] args) throws IOException {
+        String string ="";
         Domino domino = new Domino();
         Graph graph = new Graph();
-        domino.setDeck(inputFileName);
+        domino.setInputFileName(inputFileName);
+        domino.setOutputFileName(outputFileName);
+        domino.setDeck();
         graph.buildGraph(domino.deck);
-        List<Chip> answ = graph.longestSimplePath(graph);
-        domino.writeAnsw(outputFileName,answ);
+        string = graph.getMax();
+        domino.writeAnsw(string);
+        System.exit(0);
     }
 }

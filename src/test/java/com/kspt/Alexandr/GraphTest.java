@@ -1,6 +1,8 @@
 package com.kspt.Alexandr;
 
 import org.junit.Test;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import static org.junit.Assert.*;
@@ -20,6 +22,33 @@ public class GraphTest {
     }
 
     @Test
+    public void unusedTest(){
+        Graph graph = new Graph();
+        List<Graph.Vertex> listVert = graph.vertices;
+        Chip ch0 = new Chip(0, 1);
+        Chip ch1 = new Chip(1, 2);
+        Chip ch2 = new Chip(0, 5);
+        Chip ch3 = new Chip(3, 0);
+        Chip ch4 = new Chip(3, 4);
+        List<Chip> calloda = new ArrayList<Chip>();
+        calloda.add(ch0);
+        calloda.add(ch1);
+        calloda.add(ch2);
+        calloda.add(ch3);
+        calloda.add(ch4);
+        graph.buildGraph(calloda);
+        for(Graph.Vertex vert :graph.vertices){
+            assertFalse(vert.used);
+        }
+        for(Graph.Vertex vert :graph.vertices){
+            vert.makeUsed();
+        }
+        for(Graph.Vertex vert :graph.vertices){
+            assertTrue(vert.used);
+        }
+    }
+
+    @Test
     public void connect() {
         Graph graph = new Graph();
         List<Graph.Vertex> listVert = graph.vertices;
@@ -31,9 +60,10 @@ public class GraphTest {
         assertEquals(2, listVert.size());
         assertEquals(2, listName.size());
         graph.connect(chipA, chipB);
-        List<Graph.Vertex> neighbA = graph.vertices.get(0).neighbors;
-        List<Graph.Vertex> neighbB = graph.vertices.get(1).neighbors;
+        List<Graph.Vertex> neighbA = graph.vertices.get(0).getNeighbors() ;
+        List<Graph.Vertex> neighbB = graph.vertices.get(1).getNeighbors();
         assertEquals(1, neighbA.size());
+        assertEquals(1, neighbB.size());
         assertEquals(chipB, neighbA.get(0).chip);
     }
 
@@ -53,9 +83,6 @@ public class GraphTest {
         calloda.add(ch4);
         graph.buildGraph(calloda);
         List<Chip> neighb = graph.neighbors(ch0);
-        for (Chip ch : neighb) {
-            System.out.println(ch.chipToString());
-        }
         assertEquals(3, neighb.size());
     }
 
@@ -97,17 +124,7 @@ public class GraphTest {
     }
 
     @Test
-    public void build3() {
-        Graph graph = new Graph();
-        List<Chip> calloda = new ArrayList<Chip>();
-        try {
-            graph.buildGraph(calloda);
-        } catch (NullPointerException ex) {
-        }
-    }
-
-    @Test
-    public void longestWay() {  // пока не работает
+    public void testGetMaximal(){
         Graph graph = new Graph();
         Chip ch0 = new Chip(0, 1);
         Chip ch1 = new Chip(1, 3);
@@ -120,32 +137,56 @@ public class GraphTest {
         List<Chip> calloda = new ArrayList<Chip>();
         calloda.add(ch0);
         calloda.add(ch1);
-        calloda.add(ch2.flipChip());
+        calloda.add(ch2);
         calloda.add(ch3);
         calloda.add(ch4);
-        calloda.add(ch5.flipChip());
+        calloda.add(ch5);
         calloda.add(ch6);
         calloda.add(ch7);
         graph.buildGraph(calloda);
-        List<Chip> answ = new ArrayList<Chip>();
-        answ.add(ch2.flipChip());
-        answ.add(ch5.flipChip());
-        answ.add(ch7);
-        answ.add(ch0);
-        answ.add(ch1);
-        answ.add(ch3);
-        answ.add(ch4);
-        answ.add(ch6);
-        List<Graph.Vertex> test = new ArrayList<Graph.Vertex>();
-       // List<Chip> actual = graph.longestSimplePath(graph);
-        String expected = "";
-        String toCompare = "";
-        for(Chip ch : answ){
-            expected += ch.chipToString() + " ";
-        }
-        for(Graph.Vertex vert : test){
-            toCompare += vert.chip.chipToString() + " ";
-        }
-        assertEquals(expected,toCompare);
+        System.out.println(graph.getMax());
+    }
+
+    @Test
+    public void generalTest(){
+        Graph graph = new Graph();
+        Chip ch0 = new Chip(2, 6);
+        Chip ch1 = new Chip(1, 6);
+        Chip ch2 = new Chip(0, 5);
+        Chip ch3 = new Chip(3, 0);
+        Chip ch4 = new Chip(5, 6);
+        Chip ch5 = new Chip(5, 5);
+        Chip ch6 = new Chip(6, 6);
+        Chip ch7 = new Chip(0, 1);
+        Chip ch8 = new Chip(5, 3);
+        Chip ch9 = new Chip(2, 2);
+        Chip ch10 = new Chip(2, 5);
+        Chip ch11 = new Chip(6, 0);
+        List<Chip> calloda = new ArrayList<Chip>();
+        calloda.add(ch0);
+        calloda.add(ch1);
+        calloda.add(ch2);
+        calloda.add(ch3);
+        calloda.add(ch4);
+        calloda.add(ch5);
+        calloda.add(ch6);
+        calloda.add(ch7);
+        calloda.add(ch8);
+        calloda.add(ch9);
+        calloda.add(ch10);
+        calloda.add(ch11);
+        graph.buildGraph(calloda);
+        System.out.println(graph.getMax());
+    }
+
+    @Test
+    public void tsting() throws IOException {
+        Domino domino = new Domino();
+        Graph graph = new Graph();
+        domino.setInputFileName("C:\\Users\\LEGION\\IdeaProjects\\Domino\\src\\test\\testRecourses\\inp1.txt");
+        domino.setOutputFileName("C:\\Users\\LEGION\\IdeaProjects\\Domino\\src\\test\\testRecourses\\inp2.txt");
+        domino.setDeck();
+        graph.buildGraph(domino.deck);
+        domino.writeAnsw(graph.getMax());
     }
 }
