@@ -144,7 +144,7 @@ public class GraphTest {
         calloda.add(ch6);
         calloda.add(ch7);
         graph.buildGraph(calloda);
-        System.out.println(graph.getMax());
+        assertEquals("6:4 4:0 0:0 0:1 1:3 3:3 3:4 4:5 ",graph.getMax());
     }
 
     @Test
@@ -176,7 +176,7 @@ public class GraphTest {
         calloda.add(ch10);
         calloda.add(ch11);
         graph.buildGraph(calloda);
-        System.out.println(graph.getMax());
+        assertEquals("3:0 0:1 1:6 6:5 5:5 5:2 2:2 2:6 6:6 6:0 0:5 5:3 ",graph.getMax());
     }
 
     @Test
