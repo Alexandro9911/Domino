@@ -1,6 +1,5 @@
 package com.kspt.Alexandr;
 
-
 class Chip {
 
     int first;
@@ -12,6 +11,11 @@ class Chip {
         this.second = second;
     }
 
+    /**
+     *
+     * @param ch2 compare this chip and chip ch2
+     * @return true if this == ch2
+     */
     boolean equals(Chip ch2) {
         boolean answ = false;
         if (this.first == ch2.first && this.second == ch2.second) {
@@ -23,6 +27,10 @@ class Chip {
         return answ;
     }
 
+    /**
+     * Flipping chip
+     * @return chip
+     */
     Chip flipChip() {
         Chip answ = new Chip(first, second);
         answ.first = this.second;
@@ -30,11 +38,21 @@ class Chip {
         return answ;
     }
 
+    /**
+     * Cjnvert chip numbers to stringFormat
+     * @return string chip.first + ":" + chip second
+     */
     String chipToString() {
         String answ = "";
         answ += this.first + ":" + this.second;
         return answ;
     }
+
+    /**
+     *
+     * @param chip this chip
+     * @return if this chip is doople return true (when first == second)
+     */
 
     boolean isDoople(Chip chip) {
         if (chip.first == chip.second) {

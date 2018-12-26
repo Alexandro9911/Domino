@@ -1,11 +1,15 @@
 package com.kspt.Alexandr;
 
+
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class GraphTest {
 
@@ -124,30 +128,6 @@ public class GraphTest {
     }
 
     @Test
-    public void testGetMaximal(){
-        Graph graph = new Graph();
-        Chip ch0 = new Chip(0, 1);
-        Chip ch1 = new Chip(1, 3);
-        Chip ch2 = new Chip(4, 5);
-        Chip ch3 = new Chip(3, 3);
-        Chip ch4 = new Chip(3, 4);
-        Chip ch5 = new Chip(0, 4);
-        Chip ch6 = new Chip(4, 6);
-        Chip ch7 = new Chip(0, 0);
-        List<Chip> calloda = new ArrayList<Chip>();
-        calloda.add(ch0);
-        calloda.add(ch1);
-        calloda.add(ch2);
-        calloda.add(ch3);
-        calloda.add(ch4);
-        calloda.add(ch5);
-        calloda.add(ch6);
-        calloda.add(ch7);
-        graph.buildGraph(calloda);
-        assertEquals("6:4 4:0 0:0 0:1 1:3 3:3 3:4 4:5 ",graph.getMax());
-    }
-
-    @Test
     public void generalTest(){
         Graph graph = new Graph();
         Chip ch0 = new Chip(2, 6);
@@ -176,7 +156,7 @@ public class GraphTest {
         calloda.add(ch10);
         calloda.add(ch11);
         graph.buildGraph(calloda);
-        assertEquals("3:0 0:1 1:6 6:5 5:5 5:2 2:2 2:6 6:6 6:0 0:5 5:3 ",graph.getMax());
+        assertEquals("6:5 5:5 5:0 0:1 1:6 6:2 2:2 2:5 5:3 3:0 0:6 6:6 ",graph.getMax());
     }
 
     @Test

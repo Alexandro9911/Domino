@@ -14,6 +14,11 @@ class Graph {
 
         boolean used = false;
 
+        /**
+         *
+         * @return all neighbours of this vertex
+         */
+
         public List<Vertex> getNeighbors() {
             List<Vertex> answ = new ArrayList<Vertex>();
             Collection<Vertex> coll = neighbors.values();
@@ -21,6 +26,9 @@ class Graph {
             return answ;
         }
 
+        /**
+         *  make this vertex in chain used
+         */
         public void makeUsed() {
             this.used = true;
         }
@@ -33,11 +41,21 @@ class Graph {
 
     String maximalWay = "";
 
+    /**
+     *  add vertex in graph
+     * @param name value of this chip
+     */
     public void addVertex(Chip name) {
         Vertex vert = new Vertex(name);
         vertices.add(vert);
         verticesChip.add(name);
     }
+
+    /**
+     *  connecting chip1 with chip2
+     * @param first chip
+     * @param second chip
+     */
 
     public void connect(Chip first, Chip second) {
         if (second != null && first != null) {
@@ -50,6 +68,12 @@ class Graph {
         }
     }
 
+    /**
+     *
+     * @param name value of Chip
+     * @return all neighbors of this chip
+     */
+
     public List<Chip> neighbors(Chip name) {
         List<Chip> answ = new ArrayList<Chip>();
         Vertex vert = this.vertices.get(verticesChip.indexOf(name));
@@ -60,9 +84,11 @@ class Graph {
         return answ;
     }
 
-
-    public void buildGraph(List<Chip> deck) {  // строит граф по правилам домино(соединяет если это возможно в домино)
-        // deck уже не содержит посторонних повторяющихся фишек и недопустимых фишек
+    /**
+     * Building graph by roold of domino
+     * @param deck all chips which user wanted to add
+     */
+    public void buildGraph(List<Chip> deck) {
         Domino rools = new Domino();
         try {
             if (deck.size() == 0) throw new NullPointerException();
@@ -113,18 +139,28 @@ class Graph {
         }
     }
 
+    /**
+     * make all vertices unused
+     */
     private void makeAllunUsed() {
         for (Vertex vert : vertices) {
             vert.used = false;
         }
     }
 
+    /**
+     * make all chips of graph unflipped
+     */
     private void makeAllunFlipped() {
         for (Vertex vert : vertices) {
             vert.chip.flipped = false;
         }
     }
 
+    /**
+     *
+     * @return all chains which possible in graph
+     */
     List<List<Chip>> getAll() {
         List<List<Chip>> answ = new ArrayList<List<Chip>>();
         for (Vertex vertex : vertices) {
@@ -137,7 +173,10 @@ class Graph {
         return answ;
     }
 
-
+    /**
+     *
+     * @return all chains which possible with start in vertex
+     */
     private List<List<Chip>> getAll(Vertex vertex) {
         vertex.makeUsed();
         List<List<Chip>> answ = new ArrayList<List<Chip>>();
@@ -166,6 +205,10 @@ class Graph {
         return answ;
     }
 
+    /**
+     *
+     * @return the lengest way in graph which builded by dominoe rools
+     */
     public String getMax() {
         List<List<Chip>> lines = getAll();
         for (List<Chip> line : lines) {
@@ -181,6 +224,12 @@ class Graph {
         }
         return maximalWay;
     }
+
+    /**
+     *
+     * @param line chain of domino chips
+     * @return correct line of this chips
+     */
 
     private List<Chip> flipChain(List<Chip> line) {
         Domino rools = new Domino();

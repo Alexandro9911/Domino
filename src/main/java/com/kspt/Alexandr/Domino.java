@@ -10,7 +10,7 @@ import java.util.Scanner;
 
 public class Domino {
 
-    List<Chip> deck = new ArrayList<Chip>(); // Колода(без ошибок пользователя)
+    List<Chip> deck = new ArrayList<Chip>();
     int caseConnected;
     String inputFileName;
     String outputFileName;
@@ -23,7 +23,11 @@ public class Domino {
         this.outputFileName = outputFileName;
     }
 
-    public void setDeck() throws IOException {  // читает файл и сортирует, после этого данные записывает в колоду
+    /**
+     * reading file
+     * @throws IOException
+     */
+    public void setDeck() throws IOException {
         File file = null;
         try {
             try {
@@ -54,7 +58,11 @@ public class Domino {
         }
     }
 
-
+    /**
+     *
+     * @return File vith dech - data
+     * @throws IOException
+     */
     private File getFile() throws IOException {
         if (inputFileName.length() == 0) {
             throw new NullPointerException();
@@ -66,7 +74,11 @@ public class Domino {
         return file;
     }
 
-
+    /**
+     *
+     * @param chip check chip by dimino rools
+     * @return true if correct
+     */
     private boolean checkChip(Chip chip) {  // проверка на правильность фишки
         if (chip.first <= 6 && chip.first >= 0 && chip.second <= 6 && chip.second >= 0) {
             return true;
@@ -75,8 +87,12 @@ public class Domino {
         }
     }
 
-
-    private boolean containsDeck(Chip chip) { // содержит ли колода данную фишку уже
+    /**
+     *
+     * @param chip chip
+     * @return true if deck contains this chip
+     */
+    private boolean containsDeck(Chip chip) {
         boolean answ = false;
         for (Chip inDeck : deck) {
             if (inDeck.equals(chip)) {
@@ -86,7 +102,13 @@ public class Domino {
         return answ;
     }
 
-    int canGoinCase(Chip one, Chip another) { // проверяет можно ли соединить фишки и выводит случай соединения
+    /**
+     *
+     * @param one chip
+     * @param another chip
+     * @return int case of connection of this chips
+     */
+    int canGoinCase(Chip one, Chip another) {
         if (one == null || another == null) {
             return -1;
         }
@@ -110,6 +132,11 @@ public class Domino {
         return answ;
     }
 
+    /**
+     *
+     * @param answ write answer in file and check correct name of file
+     * @throws IOException
+     */
     public void writeAnsw(String answ) throws IOException {
         try {
             if (outputFileName.length() == 0) throw new NullPointerException();

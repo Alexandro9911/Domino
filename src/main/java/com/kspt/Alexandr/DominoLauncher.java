@@ -17,6 +17,11 @@ public class DominoLauncher {
         work.launch(args);
     }
 
+    /**
+     *
+     * @param args names of input- output files
+     * @throws IOException
+     */
     private  void launch(String[] args) throws IOException {
         String string ="";
         Domino domino = new Domino();
