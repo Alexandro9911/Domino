@@ -1,11 +1,14 @@
-package com.kspt.Alexandr;
+package lyalin;
 
 import java.util.*;
 
+/**
+ * Строит граф из фишек домино. нужен для составления самой длинной цеопчки домино - самый длинный путь в графе
+ */
 class Graph {
 
     class Vertex {
-        Map<Chip, Vertex> neighbors = new HashMap<Chip, Vertex>();
+        Map<Chip, Vertex> neighbors = new HashMap<Chip, Vertex>(); // содержит всех соседей этой фишки в виде map фишка-вершина
         Chip chip;
 
         public Vertex(Chip chip) {
@@ -34,9 +37,12 @@ class Graph {
         }
     }
 
-    List<Vertex> vertices = new ArrayList<Vertex>();
-    List<Chip> verticesChip = new ArrayList<Chip>();
+    List<Vertex> vertices = new ArrayList<Vertex>(); // вершины графа
+    List<Chip> verticesChip = new ArrayList<Chip>(); // содержит все фишки графа
+
+    //
     List<Pair<Chip, Chip>> connectionsList = new ArrayList<Pair<Chip, Chip>>();  // каждой паре соед. соотв. свой swCase
+   //
     List<Integer> swCase = new ArrayList<Integer>();
 
     String maximalWay = "";
@@ -87,6 +93,9 @@ class Graph {
     /**
      * Building graph by roold of domino
      * @param deck all chips which user wanted to add
+     *          метод строит граф по правилам домино. Если две фишки можно соединить по какому-либо случаю,
+     *             фишки соединяются.
+     *
      */
     public void buildGraph(List<Chip> deck) {
         Domino rools = new Domino();
@@ -142,7 +151,7 @@ class Graph {
     /**
      * make all vertices unused
      */
-    private void makeAllunUsed() {
+    void makeAllunUsed() {
         for (Vertex vert : vertices) {
             vert.used = false;
         }
@@ -151,7 +160,7 @@ class Graph {
     /**
      * make all chips of graph unflipped
      */
-    private void makeAllunFlipped() {
+     void makeAllunFlipped() {
         for (Vertex vert : vertices) {
             vert.chip.flipped = false;
         }
@@ -162,13 +171,12 @@ class Graph {
      * @return all chains which possible in graph
      */
     List<List<Chip>> getAll() {
+        makeAllunUsed();
         List<List<Chip>> answ = new ArrayList<List<Chip>>();
         for (Vertex vertex : vertices) {
-            List<List<Chip>> part = getAll(vertex);
             makeAllunUsed();
-            for (List<Chip> addition : part) {
-                answ.add(addition);
-            }
+            List<List<Chip>> part = getAll(vertex);
+            answ.addAll(part);
         }
         return answ;
     }
@@ -177,51 +185,64 @@ class Graph {
      *
      * @return all chains which possible with start in vertex
      */
-    private List<List<Chip>> getAll(Vertex vertex) {
-        vertex.makeUsed();
-        List<List<Chip>> answ = new ArrayList<List<Chip>>();
-        for (Map.Entry<Chip, Vertex> child : vertex.neighbors.entrySet()) {
-            Chip currChip = child.getKey();
-            Vertex nextVert = child.getValue();
-            List<List<Chip>> part = new ArrayList<List<Chip>>();
-            if (!nextVert.used) {
-                nextVert.makeUsed();
-                final List<List<Chip>> partialAnsw = getAll(nextVert);
-                for (List<Chip> ans : partialAnsw) {
-                    List<Chip> addition = new ArrayList<Chip>();
-                    addition.add(vertex.chip);
-                    addition.addAll(ans);
-                    part.add(addition);
-                }
-                answ.addAll(part);
-                if (partialAnsw.size() == 0) {
-                    List<Chip> addition = new ArrayList<Chip>();
-                    addition.add(vertex.chip);
-                    addition.add(currChip);
-                    answ.add(addition);
-                }
-            }
-        }
-        return answ;
+     List<List<Chip>> getAll(Vertex vertex) {
+         //vertex.makeUsed();
+         List<List<Chip>> answ = new ArrayList<>();
+         for (Map.Entry<Chip, Vertex> entry : vertex.neighbors.entrySet()) {
+             Chip currChip = entry.getKey();
+             Vertex nextVert = entry.getValue();
+             List<List<Chip>> part = new ArrayList<>();
+             if (!nextVert.used) {
+                 nextVert.makeUsed();
+                 final List<List<Chip>> partialAnsw = getAll(nextVert);
+                 part.addAll(partialAnsw);
+
+                 for (List<Chip> ans : partialAnsw) {
+                     List<Chip> addition = new ArrayList<>();
+                     nextVert.used = false;
+                     addition.add(vertex.chip);
+                     addition.addAll(ans);
+                     part.add(addition);
+                 }
+                 answ.addAll(part);
+                 if (partialAnsw.size() == 0) {
+                     List<Chip> addition = new ArrayList<>();
+                     nextVert.used = false;
+                     addition.add(currChip);
+                     addition.add(currChip);
+                     answ.add(addition);
+                 }
+             }
+         }
+         return answ;
     }
 
     /**
      *
      * @return the lengest way in graph which builded by dominoe rools
      */
-    public String getMax() {
+    public String getMax(Domino rools) {
+        int index = 0;
         List<List<Chip>> lines = getAll();
         for (List<Chip> line : lines) {
+            makeAllunFlipped();
             String str = "";
             List<Chip> correct = flipChain(line);
-            makeAllunFlipped();
             for (Chip chip : correct) {
                 str += chip.chipToString() + " ";
             }
             if (str.length() > maximalWay.length()) {
+                index = lines.indexOf(line);
                 maximalWay = str;
             }
         }
+        String unused = "";
+        for (Chip chip : rools.deck){
+            if(!lines.get(index).contains(chip)){
+                unused +=chip.chipToString()+ " ";
+            }
+        }
+        rools.unusedChips = unused;
         return maximalWay;
     }
 
@@ -229,12 +250,16 @@ class Graph {
      *
      * @param line chain of domino chips
      * @return correct line of this chips
+     *
+     * Переворачивает цепочку домино,  в рпавильно порядке.
+     * Если есть в цепочке фишки не в том порядке повернутые, он их перевернет по правилам домино, если то невозможно,
+     * цепочка обрезается по момент когда стало невозможно продолжать переворачивать фишки.
      */
 
     private List<Chip> flipChain(List<Chip> line) {
         Domino rools = new Domino();
-        List<Chip> answ = new ArrayList<Chip>();
-        List<Chip> partial = new ArrayList<Chip>();
+        List<Chip> answ = new ArrayList<>();
+        List<Chip> partial = new ArrayList<>();
         for (int i = 0; i < line.size() - 1; i++) {
             Chip curr = line.get(i);
             Chip next = line.get(i + 1);

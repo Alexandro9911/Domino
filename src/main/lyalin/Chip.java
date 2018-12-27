@@ -1,10 +1,10 @@
-package com.kspt.Alexandr;
+package lyalin;
 
 class Chip {
 
     int first;
     int second;
-    boolean flipped;
+    boolean flipped; //
 
     Chip(int first, int second) {
         this.first = first;

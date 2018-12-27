@@ -1,12 +1,10 @@
-package com.kspt.Alexandr;
+package lyalin;
 
 
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -127,22 +125,46 @@ public class GraphTest {
         }
     }
 
-    @Test
-    public void generalTest(){
+@Test
+    public void testBuild(){
         Graph graph = new Graph();
-        Chip ch0 = new Chip(2, 6);
-        Chip ch1 = new Chip(1, 6);
-        Chip ch2 = new Chip(0, 5);
-        Chip ch3 = new Chip(3, 0);
-        Chip ch4 = new Chip(5, 6);
-        Chip ch5 = new Chip(5, 5);
-        Chip ch6 = new Chip(6, 6);
-        Chip ch7 = new Chip(0, 1);
-        Chip ch8 = new Chip(5, 3);
-        Chip ch9 = new Chip(2, 2);
-        Chip ch10 = new Chip(2, 5);
-        Chip ch11 = new Chip(6, 0);
-        List<Chip> calloda = new ArrayList<Chip>();
+        Chip ch1 = new Chip(0,4);
+        Chip ch2 = new Chip(3,4);
+        Chip ch3 = new Chip(3,2);
+        Chip ch4 = new Chip(3,5);
+        Chip ch5 = new Chip(5,0);
+    Chip ch6 = new Chip(1,2);
+        List<Chip> chips = new ArrayList<Chip>();
+        chips.add(ch1);
+        chips.add(ch2);
+        chips.add(ch3);
+        chips.add(ch4);
+        chips.add(ch5);
+    chips.add(ch6);
+        graph.buildGraph(chips);
+        for (Graph.Vertex vert : graph.vertices){
+            List<Graph.Vertex> neis =vert.getNeighbors();
+            String nei = vert.chip.chipToString() + " ";
+            for (Graph.Vertex v:neis){
+                nei += v.chip.chipToString()+ " ";
+            }
+            System.out.println(nei);
+        }
+    }
+
+    @Test
+    public void testGetMaximal(){
+        Domino domino = new Domino();
+        Graph graph1 = new Graph();
+        Chip ch0 = new Chip(0, 1);
+        Chip ch1 = new Chip(1, 3);
+        Chip ch2 = new Chip(4, 5);
+        Chip ch3 = new Chip(3, 3);
+        Chip ch4 = new Chip(3, 4);
+        Chip ch5 = new Chip(0, 4);
+        Chip ch6 = new Chip(4, 6);
+        Chip ch7 = new Chip(0, 0);
+        List<Chip> calloda = new ArrayList<>();
         calloda.add(ch0);
         calloda.add(ch1);
         calloda.add(ch2);
@@ -151,22 +173,41 @@ public class GraphTest {
         calloda.add(ch5);
         calloda.add(ch6);
         calloda.add(ch7);
-        calloda.add(ch8);
-        calloda.add(ch9);
-        calloda.add(ch10);
-        calloda.add(ch11);
+        graph1.buildGraph(calloda);
+        String str = graph1.getMax(domino);
+        System.out.println(str);
+        assertEquals("5:4 4:3 3:3 3:1 1:0 0:0 0:4 4:6 ",str);
+    }
+    @Test
+    public void generalTest(){
+        Domino domino = new Domino();
+        Graph graph = new Graph();
+        Chip ch0 = new Chip(2, 6);
+        Chip ch1 = new Chip(1, 6);
+        Chip ch2 = new Chip(0, 5);
+        Chip ch3 = new Chip(3, 0);
+        Chip ch4 = new Chip(5, 6);
+        Chip ch5 = new Chip(5, 5);
+        List<Chip> calloda = new ArrayList<>();
+        calloda.add(ch0);
+        calloda.add(ch1);
+        calloda.add(ch2);
+        calloda.add(ch3);
+        calloda.add(ch4);
+        calloda.add(ch5);
         graph.buildGraph(calloda);
-        assertEquals("6:5 5:5 5:0 0:1 1:6 6:2 2:2 2:5 5:3 3:0 0:6 6:6 ",graph.getMax());
+        String str = graph.getMax(domino);
+        System.out.println(str);
     }
 
     @Test
-    public void tsting() throws IOException {
+    public void tsting() {
         Domino domino = new Domino();
         Graph graph = new Graph();
         domino.setInputFileName("C:\\Users\\LEGION\\IdeaProjects\\Domino\\src\\test\\testRecourses\\inp1.txt");
         domino.setOutputFileName("C:\\Users\\LEGION\\IdeaProjects\\Domino\\src\\test\\testRecourses\\inp2.txt");
         domino.setDeck();
         graph.buildGraph(domino.deck);
-        domino.writeAnsw(graph.getMax());
+        domino.writeAnsw(graph.getMax(domino),domino.unusedChips);
     }
 }

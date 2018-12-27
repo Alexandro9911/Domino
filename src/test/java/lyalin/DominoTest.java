@@ -1,11 +1,9 @@
-package com.kspt.Alexandr;
+package lyalin;
 
 import org.junit.Test;
 
-import javax.imageio.IIOException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import static org.junit.Assert.*;

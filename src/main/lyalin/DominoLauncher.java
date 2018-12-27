@@ -1,6 +1,4 @@
-package com.kspt.Alexandr;
-
-import java.io.IOException;
+package lyalin;
 
 import org.kohsuke.args4j.Argument;
 
@@ -12,7 +10,7 @@ public class DominoLauncher {
     @Argument(required = true, metaVar = "OutputName", usage = "Output file name")
     private String outputFileName = null;
 
-    public static void main(String[] args)throws IOException {
+    public static void main(String[] args) {
         DominoLauncher work = new DominoLauncher();
         work.launch(args);
     }
@@ -20,9 +18,9 @@ public class DominoLauncher {
     /**
      *
      * @param args names of input- output files
-     * @throws IOException
+     *
      */
-    private  void launch(String[] args) throws IOException {
+    private  void launch(String[] args) {
         String string ="";
         Domino domino = new Domino();
         Graph graph = new Graph();
@@ -30,8 +28,8 @@ public class DominoLauncher {
         domino.setOutputFileName(outputFileName);
         domino.setDeck();
         graph.buildGraph(domino.deck);
-        string = graph.getMax();
-        domino.writeAnsw(string);
+        string = graph.getMax(domino);
+        domino.writeAnsw(string,domino.unusedChips);
         System.exit(0);
     }
 }

@@ -1,4 +1,4 @@
-package com.kspt.Alexandr;
+package lyalin;
 
 public class Pair<T, N> {
     Chip first;
